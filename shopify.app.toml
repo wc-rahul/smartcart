@@ -2,12 +2,11 @@
 
 client_id = "c35a0459e3314559fd12861c14addc63"
 name = "proxy-test"
-application_url = "https://example.com"
+application_url = "https://smartcart-6c4d.onrender.com"
 embedded = true
 
 [build]
 automatically_update_urls_on_dev = true
-include_config_on_deploy = true
 
 [webhooks]
 api_version = "2026-04"
@@ -25,7 +24,7 @@ api_version = "2026-04"
 scopes = "write_products,write_app_proxy"
 
 [auth]
-redirect_urls = [ "https://example.com/api/auth" ]
+redirect_urls = [ "https://smartcart-6c4d.onrender.com/api/auth" ]
 
 [app_proxy]
 url = "/my-app-proxy"
