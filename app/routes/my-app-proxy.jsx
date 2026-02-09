@@ -6,37 +6,17 @@ export const loader = async ({ request }) => {
   console.log('RRRRRAAAAAAAHHHHHHHUUUUUULLLLLLL',request)
   const {storefront, liquid} = await authenticate.public.appProxy(request);
 
-  // // Read URL parameters added by Shopify when proxying
-  // const url = new URL(request.url);
+  // Read URL parameters added by Shopify when proxying
+  const url = new URL(request.url);
 
-  // return {
-  //   shop: url.searchParams.get("shop"),
-  //   loggedInCustomerId: url.searchParams.get("logged_in_customer_id"),
-  // };
-  if (!storefront) {
-    return new Response();
-  }
-
-  const response = await storefront.graphql(
-    `#graphql
-    query productTitle {
-      products(first: 1) {
-        nodes {
-          title
-        }
-      }
-    }`,
-  );
-  const body = await response.json();
-
-  const title = body.data.products.nodes[0].title;
-
-  return liquid(`Found product ${title} from {{shop.name}}`);
-  
+  return {
+    shop: url.searchParams.get("shop"),
+    loggedInCustomerId: url.searchParams.get("logged_in_customer_id"),
+  };
 };
 
 export default function MyAppProxy() {
-  const loaderdata = useLoaderData();
+  const { shop, loggedInCustomerId } = useLoaderData();
 
-  return <div>{loaderdata}</div>;
+  return <div>{`Hello world from ${loggedInCustomerId || "not-logged-in"} on ${shop}`}</div>;
 }

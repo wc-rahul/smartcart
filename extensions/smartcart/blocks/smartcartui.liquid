@@ -1,0 +1,90 @@
+<script defer="defer" src="{{ 'smartcart.js' | asset_url }}" data-shop_currency='{{ shop.currency }}' data-shop_money="{{ shop.money_format }}"></script>
+{{ 'smartcart.css' | asset_url | stylesheet_tag }}
+<div id="smart-cart-drawer" class="smcadr_mainwrapper" data-cart-drawer>
+  <div class="smcadr_wrap">
+
+    <div class="smcadr_header_cnt">
+      <h2>Your cart</h2>
+      <span data-cart-count>{{ cart.item_count }}</span>
+      <button type="button" data-cart-close>✕</button>
+    </div>
+
+    <div class="cart-items" data-cart-items>
+      {% for item in cart.items %}
+      <div class="cart-item" data-line-item data-key="{{ item.key }}">
+        <div class="cart_item_image">
+          <img src="{{ item.image | image_url }}" width="100">
+        </div>
+
+        <div class="cart_item_info">
+          <p>{{ item.product.title }}</p>
+
+          <div class="item_quantity">
+            <button type="button" data-qty-minus>-</button>
+
+            <input
+              type="number"
+              data-qty-input
+              min="{{ item.variant.quantity_rule.min }}"
+              max="{{ item.variant.quantity_rule.max }}"
+              step="{{ item.variant.quantity_rule.increment }}"
+              value="{{ item.quantity }}"
+            >
+
+            <button type="button" data-qty-plus>+</button>
+          </div>
+
+          <p class="line-error" data-line-error hidden></p>
+        </div>
+
+        <div class="cart_item_cnt">
+          <p>{{ item.final_line_price | money }}</p>
+          <button type="button" data-remove>Remove</button>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- Discount -->
+    <div class="cart-discount">
+      <input type="text" placeholder="Discount code" data-discount-input>
+      <button type="button" data-apply-discount>Apply</button>
+      <p class="discount-error" data-discount-error hidden></p>
+      <div class="cart-discounts" data-discount-list></div>
+    </div>
+
+    <!-- Note -->
+    <div class="cart-note">
+      <textarea data-cart-note placeholder="Add a note">{{ cart.note }}</textarea>
+    </div>
+    {{ additional_checkout_buttons }}
+    {% if additional_checkout_buttons %}
+      <div class="additional-checkout-buttons">
+        {{ content_for_additional_checkout_buttons }}
+        <shopify-payment-button
+          payment-methods="shop_pay, apple_pay, google_pay, paypal">
+        </shopify-payment-button>
+      </div>
+    {% endif %}
+    {% if product.available %}
+  {% form 'product', product %}
+    <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+    <shopify-payment-button></shopify-payment-button>
+  {% endform %}
+{% endif %}
+
+  </div>
+</div>
+
+
+<script>
+  console.log({{ block.settings | json }})
+  window['smartcartdrawer'] = {settings: {{ block.settings | json }}};
+</script>
+{% schema %}
+{
+  "name": "Smart Cart Drawer",
+  "target": "body",
+  "settings": []
+}
+{% endschema %}
